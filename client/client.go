@@ -14,7 +14,7 @@ func Req(args []string) {
 	case "tcp":
 		protocol.TCPClient(args)
 	case "udp":
-		internal.Unimplemented("udp")
+		protocol.UDPClient(args)
 	case "unix":
 		internal.Unimplemented("unix")
 	case "unixpacket":

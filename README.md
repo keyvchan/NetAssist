@@ -13,3 +13,4 @@ $ NetAssist <type> <protocol> <address:port>
 ## Protocol
 
 - TCP
+- UDP

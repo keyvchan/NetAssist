@@ -17,6 +17,8 @@ func Serve(args []string) {
 		protocol.UDPServer(args)
 	case "unix":
 		protocol.UnixServer(args)
+	case "unixgram":
+		protocol.UnixgramServer(args)
 	case "unixpacket":
 		internal.Unimplemented("unixpacket")
 	case "ip":

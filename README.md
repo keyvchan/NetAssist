@@ -14,3 +14,4 @@ $ NetAssist <type> <protocol> <address:port>
 
 - TCP
 - UDP
+- Unix Domain Socket (except for `unixpacket`)

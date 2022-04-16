@@ -5,6 +5,7 @@ import (
 
 	"github.com/keyvchan/NetAssist/internal"
 	"github.com/keyvchan/NetAssist/protocol"
+	"github.com/keyvchan/NetAssist/protocol/ip"
 )
 
 func Req() {
@@ -21,8 +22,8 @@ func Req() {
 		protocol.UnixgramClient()
 	case "unixpacket":
 		internal.Unimplemented("unixpacket")
-	case "ip":
-		internal.Unimplemented("ip")
+	case "icmp":
+		ip.ICMPRequest()
 	default:
 		log.Fatal("unknown protocol", types)
 	}

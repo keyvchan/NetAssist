@@ -1,23 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"os"
 
 	"github.com/keyvchan/NetAssist/client"
+	"github.com/keyvchan/NetAssist/internal"
 	"github.com/keyvchan/NetAssist/server"
 )
 
 func main() {
-	args := os.Args
-	fmt.Println(args)
-	types := args[1]
+	internal.SetArgs()
+	types := internal.GetArg(1)
 	switch types {
 	case "server":
-		server.Serve(args[2:])
+		server.Serve()
 	case "client":
-		client.Req(args[2:])
+		client.Req()
 	default:
 		log.Fatal("Unknown type: ", types)
 	}

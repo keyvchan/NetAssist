@@ -7,10 +7,12 @@ import (
 	"log"
 	"net"
 	"os"
+
+	"github.com/keyvchan/NetAssist/internal"
 )
 
-func TCPServer(args []string) {
-	address := args[1]
+func TCPServer() {
+	address := internal.GetArg(3)
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatal(err)
@@ -31,8 +33,8 @@ func TCPServer(args []string) {
 	}
 
 }
-func TCPClient(args []string) {
-	address := args[1]
+func TCPClient() {
+	address := internal.GetArg(3)
 	conn, err := net.Dial("tcp", address)
 	if err != nil {
 		log.Fatal(err)

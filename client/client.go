@@ -7,18 +7,18 @@ import (
 	"github.com/keyvchan/NetAssist/protocol"
 )
 
-func Req(args []string) {
-	types := args[0]
+func Req() {
+	types := internal.GetArg(2)
 	log.Println("Req:", types)
 	switch types {
 	case "tcp":
-		protocol.TCPClient(args)
+		protocol.TCPClient()
 	case "udp":
-		protocol.UDPClient(args)
+		protocol.UDPClient()
 	case "unix":
-		protocol.UnixClient(args)
+		protocol.UnixClient()
 	case "unixgram":
-		protocol.UnixgramClient(args)
+		protocol.UnixgramClient()
 	case "unixpacket":
 		internal.Unimplemented("unixpacket")
 	case "ip":

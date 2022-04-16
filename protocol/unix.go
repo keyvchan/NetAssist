@@ -7,10 +7,12 @@ import (
 	"log"
 	"net"
 	"os"
+
+	"github.com/keyvchan/NetAssist/internal"
 )
 
-func UnixServer(args []string) {
-	address := args[1]
+func UnixServer() {
+	address := internal.GetArg(3)
 	listener, err := net.Listen("unix", address)
 	if err != nil {
 		log.Fatal(err)
@@ -31,8 +33,8 @@ func UnixServer(args []string) {
 
 }
 
-func UnixClient(args []string) {
-	address := args[1]
+func UnixClient() {
+	address := internal.GetArg(3)
 	conn, err := net.Dial("unix", address)
 	if err != nil {
 		log.Fatal(err)

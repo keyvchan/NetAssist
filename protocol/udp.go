@@ -7,10 +7,12 @@ import (
 	"log"
 	"net"
 	"os"
+
+	"github.com/keyvchan/NetAssist/internal"
 )
 
-func UDPServer(args []string) {
-	address := args[1]
+func UDPServer() {
+	address := internal.GetArg(3)
 	conn, err := net.ListenPacket("udp", address)
 	if err != nil {
 		log.Fatal(err)
@@ -22,8 +24,8 @@ func UDPServer(args []string) {
 	}
 }
 
-func UDPClient(args []string) {
-	address := args[1]
+func UDPClient() {
+	address := internal.GetArg(3)
 	conn, err := net.Dial("udp", address)
 	if err != nil {
 		log.Fatal(err)

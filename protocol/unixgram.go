@@ -7,10 +7,12 @@ import (
 	"log"
 	"net"
 	"os"
+
+	"github.com/keyvchan/NetAssist/internal"
 )
 
-func UnixgramServer(args []string) {
-	address := args[1]
+func UnixgramServer() {
+	address := internal.GetArg(3)
 	conn, err := net.ListenPacket("unixgram", address)
 	if err != nil {
 		log.Fatal(err)
@@ -22,8 +24,8 @@ func UnixgramServer(args []string) {
 	}
 }
 
-func UnixgramClient(args []string) {
-	address := args[1]
+func UnixgramClient() {
+	address := internal.GetArg(3)
 	conn, err := net.Dial("unixgram", address)
 	if err != nil {
 		log.Fatal(err)

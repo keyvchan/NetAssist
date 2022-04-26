@@ -12,6 +12,6 @@ $ NetAssist <type> <protocol> <address:port>
 
 ## Protocol
 
-- TCP
+- TCP (multiple clients, broadcast to all clients)
 - UDP
 - Unix Domain Socket (except for `unixpacket`)

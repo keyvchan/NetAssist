@@ -2,9 +2,9 @@ name: Release
 
 on:
   push:
-    branches: [master]
+    branches: [workflows]
   pull_request:
-    branches: [master]
+    branches: [workflows]
 
 jobs:
   linux:

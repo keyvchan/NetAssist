@@ -17,21 +17,25 @@ func TCPServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	conn, err := listener.Accept()
-	log.Println("Accepted connection")
-	if err != nil {
-		log.Fatal(err)
-	}
-	buf := make([]byte, 1024)
 	for {
-		_, err = conn.Read(buf)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(conn.RemoteAddr())
-		fmt.Println(string(buf))
-	}
+		conn, err := listener.Accept()
+		go func() {
+			log.Println("Accepted connection")
+			if err != nil {
+				log.Fatal(err)
+			}
+			buf := make([]byte, 1024)
+			for {
+				_, err = conn.Read(buf)
+				if err != nil {
+					log.Fatal(err)
+				}
+				fmt.Println(conn.RemoteAddr())
+				fmt.Println(string(buf))
+			}
 
+		}()
+	}
 }
 func TCPClient() {
 	address := internal.GetArg(3)

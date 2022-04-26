@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -19,16 +20,20 @@ func TCPServer() {
 	}
 	for {
 		conn, err := listener.Accept()
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("Accepted connection")
 		go func() {
-			log.Println("Accepted connection")
-			if err != nil {
-				log.Fatal(err)
-			}
 			buf := make([]byte, 1024)
 			for {
 				_, err = conn.Read(buf)
+				if errors.Is(err, io.EOF) {
+					log.Println("Connection closed")
+					break
+				}
 				if err != nil {
-					log.Fatal(err)
+					log.Println(err)
 				}
 				fmt.Println(conn.RemoteAddr())
 				fmt.Println(string(buf))

@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: Build
+        run: go build -o NetAssist-linux
+      - uses: actions/upload-artifact@v2
+        with:
+          name: NetAssist-linux
+          path: NetAssist-linux
+          retention-days: 1
+
+  macOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: Build
+        run: go build -o NetAssist-macos
+      - uses: actions/upload-artifact@v2
+        with:
+          name: NetAssist-macos
+          path: NetAssist-macos
+          retention-days: 1
+
+  publish:
+    needs: [linux, macOS]
+    runs-on: ubuntu-latest
+    env:
+      GH_REPO: ${{ github.repository }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            NetAssist-macos
+            NetAssist-linux

@@ -15,6 +15,9 @@ func GetArg(i int) string {
 	if i < len(args) {
 		return args[i]
 	} else {
+		if i == 4 {
+			return "text"
+		}
 		log.Fatal("Index out of range")
 	}
 	return ""

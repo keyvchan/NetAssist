@@ -1,12 +1,9 @@
 package protocol
 
 import (
-	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"net"
-	"os"
 
 	"github.com/keyvchan/NetAssist/internal"
 )
@@ -32,13 +29,15 @@ func UDPClient() {
 	}
 	defer conn.Close()
 
-	for {
-		scanner := bufio.NewScanner(os.Stdin)
-		if scanner.Scan() {
-			conn.Write([]byte(scanner.Text()))
-		} else {
-			log.Fatal(errors.New("failed to read from stdin"))
-		}
+	// we don't need to close udp socket
+	go internal.ConnRead(conn, nil)
 
+	for {
+		buf := internal.StdinRead()
+		_, err := conn.Write(buf)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
+
 }

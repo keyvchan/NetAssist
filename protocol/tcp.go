@@ -1,9 +1,6 @@
 package protocol
 
 import (
-	"errors"
-	"fmt"
-	"io"
 	"log"
 	"net"
 
@@ -37,7 +34,7 @@ func TCPServer() {
 		}
 		log.Println("Accepted connection")
 		connections[conn] = true
-		go read_from_conn(conn, closed_conn)
+		go internal.ConnRead(conn, closed_conn)
 	}
 }
 
@@ -54,7 +51,7 @@ func TCPClient() {
 	go read_from_stdin(message_chan)
 	go write_to_conn(message_chan, conn)
 
-	read_from_conn(conn, nil)
+	internal.ConnRead(conn, nil)
 
 }
 
@@ -65,38 +62,6 @@ func conn_cleanup(closed_conn chan net.Conn, conns *map[net.Conn]bool) {
 		delete(*conns, conn)
 	}
 
-}
-
-func read_from_conn(conn net.Conn, closed_conn chan net.Conn) {
-	buf := make([]byte, 1024)
-	input_binary := internal.GetArg(4)
-	for {
-		n, err := conn.Read(buf)
-		if errors.Is(err, io.EOF) {
-			log.Println("Connection closed")
-			// remove from channel
-			if closed_conn != nil {
-				// server conn
-				closed_conn <- conn
-			} else {
-				// client conn
-				conn.Close()
-			}
-			break
-		}
-		if err != nil {
-			log.Println(err)
-		}
-		fmt.Println(conn.RemoteAddr())
-		if input_binary == "--binary" {
-			for i := 0; i < n; i++ {
-				fmt.Printf("%02x ", buf[i])
-			}
-			fmt.Print("\n")
-		} else {
-			fmt.Println(string(buf))
-		}
-	}
 }
 
 func write_to_conns(message_chan chan []byte, connections map[net.Conn]bool) {

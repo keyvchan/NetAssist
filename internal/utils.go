@@ -5,7 +5,10 @@ import (
 	"bytes"
 	"encoding/hex"
 	"errors"
+	"fmt"
+	"io"
 	"log"
+	"net"
 	"os"
 )
 
@@ -39,4 +42,36 @@ func StdinRead() []byte {
 		log.Fatal(errors.New("failed to read from stdin"))
 	}
 	return nil
+}
+
+func ConnRead(conn net.Conn, closed_conn chan net.Conn) {
+	buf := make([]byte, 1024)
+	input_binary := GetArg(4)
+	for {
+		n, err := conn.Read(buf)
+		if errors.Is(err, io.EOF) {
+			log.Println("Connection closed")
+			// remove from channel
+			if closed_conn != nil {
+				// server conn
+				closed_conn <- conn
+			} else {
+				// client conn
+				conn.Close()
+			}
+			break
+		}
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println(conn.RemoteAddr())
+		if input_binary == "--binary" {
+			for i := 0; i < n; i++ {
+				fmt.Printf("%02x ", buf[i])
+			}
+			fmt.Print("\n")
+		} else {
+			fmt.Println(string(buf))
+		}
+	}
 }

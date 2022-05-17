@@ -2,6 +2,7 @@ package internal
 
 import (
 	"log"
+	"net"
 	"os"
 )
 
@@ -21,4 +22,9 @@ func GetArg(i int) string {
 		log.Fatal("Index out of range")
 	}
 	return ""
+}
+
+type Message struct {
+	Content []byte
+	Conn    net.Conn
 }

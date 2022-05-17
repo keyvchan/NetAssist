@@ -3,8 +3,10 @@ package protocol
 import (
 	"log"
 	"net"
+	"os"
 
 	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/utils"
 )
 
 func TCPServer() {
@@ -14,19 +16,26 @@ func TCPServer() {
 		log.Fatal(err)
 	}
 	// store all connections in a slice
+	// NOTE: Possibly race condition
 	var connections = map[net.Conn]bool{}
 
 	// create a chennel to communicate between the read and write goroutines
-	message_chan := make(chan []byte)
+	conn_read := make(chan internal.Message)
+	stdin_read := make(chan internal.Message)
 
 	// create a goroutine to read user input
-	go read_from_stdin(message_chan)
-	go write_to_conns(message_chan, connections)
+	go utils.ReadMessage(stdin_read, os.Stdin)
+	go utils.WriteMessage(conn_read, os.Stdout)
 
 	// create a goroutines cleanup closed conn
-	closed_conn := make(chan net.Conn)
-	go conn_cleanup(closed_conn, &connections)
+	go conn_cleanup(*internal.ClosedConn, connections)
+	go write_to_conns(stdin_read, connections)
+	go accept_conn(conn_read, listener, connections)
+	select {}
 
+}
+
+func accept_conn(read_chan chan internal.Message, listener net.Listener, connections map[net.Conn]bool) {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -34,8 +43,9 @@ func TCPServer() {
 		}
 		log.Println("Accepted connection")
 		connections[conn] = true
-		go internal.ConnRead(conn, closed_conn)
+		go utils.ReadMessage(read_chan, conn)
 	}
+
 }
 
 func TCPClient() {
@@ -47,46 +57,39 @@ func TCPClient() {
 	defer conn.Close()
 
 	// create a chennel to communicate between the read and write goroutines
-	message_chan := make(chan []byte)
-	go read_from_stdin(message_chan)
-	go write_to_conn(message_chan, conn)
+	stdin_read := make(chan internal.Message)
+	go utils.ReadMessage(stdin_read, os.Stdin)
+	go utils.WriteMessage(stdin_read, conn)
 
-	internal.ConnRead(conn, nil)
+	quit := make(chan bool)
+	conn_read := make(chan internal.Message)
+	go utils.ReadMessage(conn_read, conn)
+	go utils.WriteMessage(conn_read, os.Stdout)
+	go func() {
+		conn := <-*internal.ClosedConn
+		conn.Close()
+		quit <- true
+	}()
 
+	// quit on signal
+	<-quit
 }
 
-func conn_cleanup(closed_conn chan net.Conn, conns *map[net.Conn]bool) {
+func conn_cleanup(closed_conn chan net.Conn, conns map[net.Conn]bool) {
 	for {
 		conn := <-closed_conn
 		conn.Close()
-		delete(*conns, conn)
+		delete(conns, conn)
 	}
 
 }
 
-func write_to_conns(message_chan chan []byte, connections map[net.Conn]bool) {
+func write_to_conns(message_chan chan internal.Message, connections map[net.Conn]bool) {
 	for {
 		message := <-message_chan
+		// check message
 		for conn := range connections {
-			conn.Write(message)
-		}
-	}
-}
-
-func write_to_conn(message_chan chan []byte, conn net.Conn) {
-	for {
-		message := <-message_chan
-		conn.Write(message)
-	}
-}
-
-func read_from_stdin(message_chan chan []byte) {
-	for {
-		buf := internal.StdinRead()
-		if buf != nil {
-			message_chan <- buf
-		} else {
-			log.Fatal("Could not read from stdin")
+			conn.Write(message.Content)
 		}
 	}
 }

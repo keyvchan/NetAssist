@@ -1,14 +1,12 @@
 package protocol
 
 import (
-	"bufio"
-	"errors"
-	"fmt"
 	"log"
 	"net"
 	"os"
 
 	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/utils"
 )
 
 func UDPServer() {
@@ -17,11 +15,14 @@ func UDPServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for {
-		buf := make([]byte, 1024)
-		conn.ReadFrom(buf)
-		fmt.Println(string(buf))
-	}
+	stdin_read_chan := make(chan internal.Message)
+	conn_read_chan := make(chan internal.Message)
+
+	go utils.ReadMessage(stdin_read_chan, os.Stdin)
+	go utils.ReadMessage(conn_read_chan, conn)
+	go utils.WriteMessage(conn_read_chan, os.Stdout)
+	go utils.WriteMessage(stdin_read_chan, conn)
+	select {}
 }
 
 func UDPClient() {
@@ -32,13 +33,14 @@ func UDPClient() {
 	}
 	defer conn.Close()
 
-	for {
-		scanner := bufio.NewScanner(os.Stdin)
-		if scanner.Scan() {
-			conn.Write([]byte(scanner.Text()))
-		} else {
-			log.Fatal(errors.New("failed to read from stdin"))
-		}
+	stdin_read_chan := make(chan internal.Message)
+	conn_read_chan := make(chan internal.Message)
+	// we don't need to close udp socket
 
-	}
+	go utils.ReadMessage(stdin_read_chan, os.Stdin)
+	go utils.ReadMessage(conn_read_chan, conn)
+	go utils.WriteMessage(conn_read_chan, os.Stdout)
+	go utils.WriteMessage(stdin_read_chan, conn)
+
+	select {}
 }

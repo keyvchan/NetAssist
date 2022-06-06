@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"log"
 	"net"
+
+	"github.com/keyvchan/NetAssist/pkg/flags"
+	"github.com/keyvchan/NetAssist/pkg/message"
 )
 
-func WriteStdout(writter interface{}, message Message) {
+func WriteStdout(writter interface{}, message message.Message) {
 
 	// write to stdout
-	input_binary := GetArg(4)
-	fmt.Println(message.Conn.RemoteAddr())
+	input_binary := flags.GetArg(4)
+	fmt.Println(message.Addr)
 
 	if input_binary == "--binary" {
 		for i := 0; i < len(message.Content); i++ {
@@ -22,7 +25,7 @@ func WriteStdout(writter interface{}, message Message) {
 	}
 }
 
-func WriteConn(writter interface{}, message Message) {
+func WriteConn(writter interface{}, message message.Message) {
 	conn, ok := writter.(net.Conn)
 	if !ok {
 		log.Fatal("Wrong type")

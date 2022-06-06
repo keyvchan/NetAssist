@@ -4,11 +4,12 @@ import (
 	"log"
 
 	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/protocol"
 )
 
 func Req() {
-	types := internal.GetArg(2)
+	types := flags.GetArg(2)
 	log.Println("Req:", types)
 	switch types {
 	case "tcp":

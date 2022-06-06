@@ -8,11 +8,11 @@ import (
 	"net"
 	"os"
 
-	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/flags"
 )
 
 func UnixgramServer() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	conn, err := net.ListenPacket("unixgram", address)
 	if err != nil {
 		log.Fatal(err)
@@ -25,7 +25,7 @@ func UnixgramServer() {
 }
 
 func UnixgramClient() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	conn, err := net.Dial("unixgram", address)
 	if err != nil {
 		log.Fatal(err)

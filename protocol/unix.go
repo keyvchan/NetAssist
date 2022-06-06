@@ -8,11 +8,11 @@ import (
 	"net"
 	"os"
 
-	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/flags"
 )
 
 func UnixServer() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	listener, err := net.Listen("unix", address)
 	if err != nil {
 		log.Fatal(err)
@@ -34,7 +34,7 @@ func UnixServer() {
 }
 
 func UnixClient() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	conn, err := net.Dial("unix", address)
 	if err != nil {
 		log.Fatal(err)

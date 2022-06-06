@@ -3,8 +3,8 @@ package client
 import (
 	"log"
 
-	"github.com/keyvchan/NetAssist/internal"
 	"github.com/keyvchan/NetAssist/pkg/flags"
+	"github.com/keyvchan/NetAssist/pkg/utils"
 	"github.com/keyvchan/NetAssist/protocol"
 )
 
@@ -21,9 +21,9 @@ func Req() {
 	case "unixgram":
 		protocol.UnixgramClient()
 	case "unixpacket":
-		internal.Unimplemented("unixpacket")
+		utils.Unimplemented("unixpacket")
 	case "ip":
-		internal.Unimplemented("ip")
+		utils.Unimplemented("ip")
 	default:
 		log.Fatal("unknown protocol", types)
 	}

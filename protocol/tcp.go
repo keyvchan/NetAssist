@@ -8,7 +8,6 @@ import (
 	"github.com/keyvchan/NetAssist/pkg/connection"
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/message"
-	"github.com/keyvchan/NetAssist/pkg/utils"
 )
 
 func TCPServer() {
@@ -31,8 +30,8 @@ func TCPServer() {
 	}
 
 	// create a goroutine to read user input
-	go utils.ReadMessage(stdin_read, stdin)
-	go utils.WriteMessage(conn_read, os.Stdout)
+	go message.Read(stdin_read, stdin)
+	go message.Write(conn_read, connection.Stdout)
 
 	// create a goroutines cleanup closed conn
 	go conn_cleanup(*connection.ClosedConn, connections)
@@ -55,7 +54,7 @@ func accept_conn(read_chan chan message.Message, listener net.Listener, connecti
 			Type: "tcp",
 			Conn: conn,
 		}
-		go utils.ReadMessage(read_chan, tcp_client)
+		go message.Read(read_chan, tcp_client)
 	}
 
 }
@@ -68,20 +67,21 @@ func TCPClient() {
 	}
 	defer conn.Close()
 
-	// create a chennel to communicate between the read and write goroutines
-	stdin_read := make(chan message.Message)
-	go utils.ReadMessage(stdin_read, connection.Stdin)
-	go utils.WriteMessage(stdin_read, conn)
-
-	quit := make(chan bool)
-	conn_read := make(chan message.Message)
-
 	tcp_client := connection.Stream{
 		Type: "tcp",
 		Conn: conn,
 	}
-	go utils.ReadMessage(conn_read, tcp_client)
-	go utils.WriteMessage(conn_read, os.Stdout)
+
+	// create a chennel to communicate between the read and write goroutines
+	stdin_read := make(chan message.Message)
+	go message.Read(stdin_read, connection.Stdin)
+	go message.Write(stdin_read, tcp_client)
+
+	quit := make(chan bool)
+	conn_read := make(chan message.Message)
+
+	go message.Read(conn_read, tcp_client)
+	go message.Write(conn_read, connection.Stdout)
 	go func() {
 		conn := <-*connection.ClosedConn
 		conn.Close()

@@ -3,12 +3,10 @@ package protocol
 import (
 	"log"
 	"net"
-	"os"
 
 	"github.com/keyvchan/NetAssist/pkg/connection"
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/message"
-	"github.com/keyvchan/NetAssist/pkg/utils"
 )
 
 func UDPServer() {
@@ -20,15 +18,15 @@ func UDPServer() {
 	stdin_read_chan := make(chan message.Message)
 	conn_read_chan := make(chan message.Message)
 
-	udp_client_conn := connection.Packet{
+	udp_server_conn := connection.Packet{
 		Type:       "udp",
 		PacketConn: conn,
 	}
 
-	go utils.ReadMessage(stdin_read_chan, connection.Stdin)
-	go utils.ReadMessage(conn_read_chan, udp_client_conn)
-	go utils.WriteMessage(conn_read_chan, os.Stdout)
-	go utils.WriteMessage(stdin_read_chan, conn)
+	go message.Read(stdin_read_chan, connection.Stdin)
+	go message.Read(conn_read_chan, udp_server_conn)
+	go message.Write(conn_read_chan, connection.Stdout)
+	go message.Write(stdin_read_chan, udp_server_conn)
 	select {}
 }
 
@@ -43,15 +41,15 @@ func UDPClient() {
 	stdin_read_chan := make(chan message.Message)
 	conn_read_chan := make(chan message.Message)
 	// we don't need to close udp socket
-	udp_server_conn := connection.Stream{
+	udp_client_conn := connection.Stream{
 		Type: "udp",
 		Conn: conn,
 	}
 
-	go utils.ReadMessage(stdin_read_chan, connection.Stdin)
-	go utils.ReadMessage(conn_read_chan, udp_server_conn)
-	go utils.WriteMessage(conn_read_chan, os.Stdout)
-	go utils.WriteMessage(stdin_read_chan, conn)
+	go message.Read(stdin_read_chan, connection.Stdin)
+	go message.Read(conn_read_chan, udp_client_conn)
+	go message.Write(conn_read_chan, connection.Stdout)
+	go message.Write(stdin_read_chan, udp_client_conn)
 
 	select {}
 }

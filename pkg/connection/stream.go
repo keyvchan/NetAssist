@@ -46,3 +46,15 @@ func ReadConn(conn interface{}) message.Message {
 	}
 	return message
 }
+
+// implements WriteMessage
+func (s Stream) WriteMessage(msg message.Message) {
+	WriteConn(s.Conn, msg)
+}
+
+func WriteConn(conn net.Conn, message message.Message) {
+	_, err := conn.Write(message.Content)
+	if err != nil {
+		log.Fatal(err)
+	}
+}

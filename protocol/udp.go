@@ -20,8 +20,8 @@ func UDPServer() {
 
 	go utils.ReadMessage(stdin_read_chan, os.Stdin)
 	go utils.ReadMessage(conn_read_chan, conn)
-	go utils.WriteMessage(stdin_read_chan, os.Stdout)
-	go utils.WriteMessage(conn_read_chan, conn)
+	go utils.WriteMessage(conn_read_chan, os.Stdout)
+	go utils.WriteMessage(stdin_read_chan, conn)
 	select {}
 }
 
@@ -39,8 +39,8 @@ func UDPClient() {
 
 	go utils.ReadMessage(stdin_read_chan, os.Stdin)
 	go utils.ReadMessage(conn_read_chan, conn)
-	go utils.WriteMessage(stdin_read_chan, os.Stdout)
-	go utils.WriteMessage(conn_read_chan, conn)
+	go utils.WriteMessage(conn_read_chan, os.Stdout)
+	go utils.WriteMessage(stdin_read_chan, conn)
 
 	select {}
 }

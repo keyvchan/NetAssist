@@ -10,6 +10,7 @@ import (
 	"github.com/keyvchan/NetAssist/pkg/message"
 )
 
+// TCPServer is a TCP server, read from stdin and write to the client and read from the client write it to stdout
 func TCPServer() {
 	address := flags.GetArg(3)
 	listener, err := net.Listen("tcp", address)
@@ -41,6 +42,7 @@ func TCPServer() {
 
 }
 
+// accept_conn accepts connections from the listener and adds them to the connections map
 func accept_conn(read_chan chan message.Message, listener net.Listener, connections map[net.Conn]bool) {
 	for {
 		conn, err := listener.Accept()
@@ -59,6 +61,7 @@ func accept_conn(read_chan chan message.Message, listener net.Listener, connecti
 
 }
 
+// TCPClient is a TCP client, read from stdin and write to the server and read from the server when it to stdout
 func TCPClient() {
 	address := flags.GetArg(3)
 	conn, err := net.Dial("tcp", address)
@@ -92,6 +95,7 @@ func TCPClient() {
 	<-quit
 }
 
+// conn_cleanup removes closed connections from the connections map
 func conn_cleanup(closed_conn chan net.Conn, conns map[net.Conn]bool) {
 	for {
 		conn := <-closed_conn
@@ -101,6 +105,7 @@ func conn_cleanup(closed_conn chan net.Conn, conns map[net.Conn]bool) {
 
 }
 
+// write_to_conns writes messages to all connections in the connections map
 func write_to_conns(message_chan chan message.Message, connections map[net.Conn]bool) {
 	for {
 		message := <-message_chan

@@ -9,6 +9,7 @@ import (
 	"github.com/keyvchan/NetAssist/pkg/message"
 )
 
+// UDPServer is a UDP server, it reads from stdin and writes to stdout and read from the client and write to the stdout
 func UDPServer() {
 	address := flags.GetArg(3)
 	conn, err := net.ListenPacket("udp", address)
@@ -30,6 +31,7 @@ func UDPServer() {
 	select {}
 }
 
+// UDPClient is a UDP client, it reads from stdin and writes to stdout and read from the server and write to the stdout
 func UDPClient() {
 	address := flags.GetArg(3)
 	conn, err := net.Dial("udp", address)

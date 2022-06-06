@@ -8,6 +8,7 @@ import (
 	"github.com/keyvchan/NetAssist/protocol"
 )
 
+// Req is the entry point for the client
 func Req() {
 	types := flags.GetArg(2)
 	log.Println("Req:", types)

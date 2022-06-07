@@ -1,6 +1,7 @@
 package message
 
 import (
+	"errors"
 	"log"
 )
 
@@ -12,7 +13,7 @@ func Read(message_chan chan Message, reader Reader) {
 		if buf.Content != nil {
 			message_chan <- buf
 		} else {
-			log.Fatal("Could not read from conn")
+			log.Println(errors.New("could not read message"), reader)
 		}
 	}
 

@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"errors"
 	"log"
 	"net"
 
@@ -20,7 +21,7 @@ func ReadPacketConn(reader net.PacketConn) message.Message {
 	buf := make([]byte, 1024)
 	n, addr, err := reader.ReadFrom(buf)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(errors.New("error reading from packet"))
 	}
 	return message.Message{
 		Content: buf[:n],

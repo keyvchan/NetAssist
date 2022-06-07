@@ -5,7 +5,10 @@ import (
 
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/utils"
-	"github.com/keyvchan/NetAssist/protocol"
+	"github.com/keyvchan/NetAssist/protocol/tcp"
+	"github.com/keyvchan/NetAssist/protocol/udp"
+	"github.com/keyvchan/NetAssist/protocol/unixgram"
+	"github.com/keyvchan/NetAssist/protocol/unixsocket"
 )
 
 func Serve() {
@@ -13,13 +16,13 @@ func Serve() {
 	log.Println("Serve:", types)
 	switch types {
 	case "tcp":
-		protocol.TCPServer()
+		tcp.Server()
 	case "udp":
-		protocol.UDPServer()
+		udp.Server()
 	case "unix":
-		protocol.UnixServer()
+		unixsocket.Server()
 	case "unixgram":
-		protocol.UnixgramServer()
+		unixgram.Server()
 	case "unixpacket":
 		utils.Unimplemented("unixpacket")
 	case "ip":

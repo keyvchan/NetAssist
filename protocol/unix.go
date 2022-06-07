@@ -8,11 +8,12 @@ import (
 	"net"
 	"os"
 
-	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/flags"
 )
 
+// UnixServer is a server for the unix socket, it bridged server to stdout and stdin to server
 func UnixServer() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	listener, err := net.Listen("unix", address)
 	if err != nil {
 		log.Fatal(err)
@@ -33,8 +34,9 @@ func UnixServer() {
 
 }
 
+// UnixClient is a client for the unix socket, it bridged stdin to server and server to stdout
 func UnixClient() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	conn, err := net.Dial("unix", address)
 	if err != nil {
 		log.Fatal(err)

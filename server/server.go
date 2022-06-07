@@ -3,12 +3,13 @@ package server
 import (
 	"log"
 
-	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/flags"
+	"github.com/keyvchan/NetAssist/pkg/utils"
 	"github.com/keyvchan/NetAssist/protocol"
 )
 
 func Serve() {
-	types := internal.GetArg(2)
+	types := flags.GetArg(2)
 	log.Println("Serve:", types)
 	switch types {
 	case "tcp":
@@ -20,9 +21,9 @@ func Serve() {
 	case "unixgram":
 		protocol.UnixgramServer()
 	case "unixpacket":
-		internal.Unimplemented("unixpacket")
+		utils.Unimplemented("unixpacket")
 	case "ip":
-		internal.Unimplemented("ip")
+		utils.Unimplemented("ip")
 	default:
 		log.Fatal("unknow protocol: ", types)
 	}

@@ -8,11 +8,12 @@ import (
 	"net"
 	"os"
 
-	"github.com/keyvchan/NetAssist/internal"
+	"github.com/keyvchan/NetAssist/pkg/flags"
 )
 
+// UnixgramServer is a server for the unixgram protocol, its create a bridge between server and client
 func UnixgramServer() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	conn, err := net.ListenPacket("unixgram", address)
 	if err != nil {
 		log.Fatal(err)
@@ -24,8 +25,9 @@ func UnixgramServer() {
 	}
 }
 
+// UnixgramClient is a client for the unixgram protocol, its create a bridge between server and client
 func UnixgramClient() {
-	address := internal.GetArg(3)
+	address := flags.GetArg(3)
 	conn, err := net.Dial("unixgram", address)
 	if err != nil {
 		log.Fatal(err)

@@ -1,17 +1,19 @@
-package internal
+package flags
 
 import (
 	"log"
-	"net"
 	"os"
 )
 
+// args stores the arguments
 var args []string
 
+// SetArgs retrieves the arguments from the command line
 func SetArgs() {
 	args = os.Args
 }
 
+// GetArg returns the nth argument
 func GetArg(i int) string {
 	if i < len(args) {
 		return args[i]
@@ -22,9 +24,4 @@ func GetArg(i int) string {
 		log.Fatal("Index out of range")
 	}
 	return ""
-}
-
-type Message struct {
-	Content []byte
-	Conn    net.Conn
 }

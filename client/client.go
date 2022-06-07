@@ -5,7 +5,10 @@ import (
 
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/utils"
-	"github.com/keyvchan/NetAssist/protocol"
+	"github.com/keyvchan/NetAssist/protocol/tcp"
+	"github.com/keyvchan/NetAssist/protocol/udp"
+	"github.com/keyvchan/NetAssist/protocol/unixgram"
+	"github.com/keyvchan/NetAssist/protocol/unixsocket"
 )
 
 // Req is the entry point for the client
@@ -14,13 +17,13 @@ func Req() {
 	log.Println("Req:", types)
 	switch types {
 	case "tcp":
-		protocol.TCPClient()
+		tcp.Client()
 	case "udp":
-		protocol.UDPClient()
+		udp.Client()
 	case "unix":
-		protocol.UnixClient()
+		unixsocket.Client()
 	case "unixgram":
-		protocol.UnixgramClient()
+		unixgram.Client()
 	case "unixpacket":
 		utils.Unimplemented("unixpacket")
 	case "ip":

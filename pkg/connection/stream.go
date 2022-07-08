@@ -27,7 +27,7 @@ func ReadConn(conn interface{}) message.Message {
 	if !ok {
 		log.Fatal("Wrong type")
 	}
-	buf := make([]byte, 1024)
+	buf := make([]byte, 4096)
 	// input_binary := GetArg(4)
 	n, err := connn.Read(buf)
 	if errors.Is(err, io.EOF) {

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/keyvchan/NetAssist/client"
+	"github.com/keyvchan/NetAssist/perf"
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/server"
 )
@@ -16,6 +17,8 @@ func main() {
 		server.Serve()
 	case "client":
 		client.Req()
+	case "perf":
+		perf.ServerPerf()
 	default:
 		log.Fatal("Unknown type: ", types)
 	}

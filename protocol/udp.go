@@ -3,6 +3,7 @@ package protocol
 import (
 	"log"
 	"net"
+	"strconv"
 
 	"github.com/keyvchan/NetAssist/pkg/connection"
 	"github.com/keyvchan/NetAssist/pkg/flags"
@@ -11,7 +12,7 @@ import (
 
 // UDPServer is a UDP server, it reads from stdin and writes to stdout and read from the client and write to the stdout
 func UDPServer() {
-	address := flags.GetArg(3)
+	address := flags.Config.Host + ":" + strconv.Itoa(flags.Config.Port)
 	conn, err := net.ListenPacket("udp", address)
 	if err != nil {
 		log.Fatal(err)
@@ -33,7 +34,7 @@ func UDPServer() {
 
 // UDPClient is a UDP client, it reads from stdin and writes to stdout and read from the server and write to the stdout
 func UDPClient() {
-	address := flags.GetArg(3)
+	address := flags.Config.Host + ":" + strconv.Itoa(flags.Config.Port)
 	conn, err := net.Dial("udp", address)
 	if err != nil {
 		log.Fatal(err)

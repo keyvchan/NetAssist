@@ -4,13 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/hex"
-	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/message"
+	"github.com/rs/zerolog/log"
 )
 
 // File represents a abstraced file connection.
@@ -42,19 +41,19 @@ func (f File) ReadMessage() message.Message {
 }
 
 func ReadStdin(stdin *os.File) message.Message {
-	input_binary := flags.GetArg(4)
+	input_binary := flags.Config.Binary
 	scanner := bufio.NewScanner(stdin)
 	if scanner.Scan() {
 
 		buf := []byte{}
-		if input_binary == "--binary" {
+		if input_binary {
 			byte_slices := bytes.Split(scanner.Bytes(), []byte(" "))
 			for _, byte_slice := range byte_slices {
 				new_byte := make([]byte, 1024)
 				n, err := hex.Decode(new_byte, byte_slice)
 				if err != nil {
 					// hex parse error, ignore this byte
-					log.Println(err)
+					log.Err(err).Msg("Could not parse hex")
 					continue
 				}
 				buf = append(buf, new_byte[:n]...)
@@ -70,7 +69,7 @@ func ReadStdin(stdin *os.File) message.Message {
 			Addr:    nil,
 		}
 	} else {
-		log.Fatal(errors.New("failed to read from stdin"))
+		log.Error().Msg("failed to read from stdin")
 	}
 	return message.Message{}
 }
@@ -84,13 +83,13 @@ func (f File) WriteMessage(msg message.Message) {
 	}
 }
 
-func WriteStdout(writter interface{}, message message.Message) {
+func WriteStdout(_ interface{}, message message.Message) {
 
 	// write to stdout
-	input_binary := flags.GetArg(4)
-	fmt.Println(message.Addr)
+	input_binary := flags.Config.Binary
+	log.Debug().Msg(message.String())
 
-	if input_binary == "--binary" {
+	if input_binary {
 		for i := 0; i < len(message.Content); i++ {
 			fmt.Printf("%02x ", message.Content[i])
 		}

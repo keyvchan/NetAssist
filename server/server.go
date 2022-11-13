@@ -1,16 +1,15 @@
 package server
 
 import (
-	"log"
-
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/utils"
 	"github.com/keyvchan/NetAssist/protocol"
+	"github.com/rs/zerolog/log"
 )
 
 func Serve() {
-	types := flags.GetArg(2)
-	log.Println("Serve:", types)
+	types := flags.Config.Protocol
+	log.Info().Msg("Serve: " + types)
 	switch types {
 	case "tcp":
 		protocol.TCPServer()
@@ -25,6 +24,6 @@ func Serve() {
 	case "ip":
 		utils.Unimplemented("ip")
 	default:
-		log.Fatal("unknow protocol: ", types)
+		log.Error().Msg("unknow protocol: " + types)
 	}
 }

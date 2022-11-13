@@ -1,17 +1,16 @@
 package client
 
 import (
-	"log"
-
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/utils"
 	"github.com/keyvchan/NetAssist/protocol"
+	"github.com/rs/zerolog/log"
 )
 
 // Req is the entry point for the client
 func Req() {
-	types := flags.GetArg(2)
-	log.Println("Req:", types)
+	types := flags.Config.Protocol
+	log.Info().Msg("Req: " + types)
 	switch types {
 	case "tcp":
 		protocol.TCPClient()
@@ -26,6 +25,6 @@ func Req() {
 	case "ip":
 		utils.Unimplemented("ip")
 	default:
-		log.Fatal("unknown protocol", types)
+		log.Error().Msg("unknown protocol " + types)
 	}
 }

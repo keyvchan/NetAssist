@@ -3,10 +3,11 @@ package connection
 import (
 	"errors"
 	"io"
-	"log"
+
 	"net"
 
 	"github.com/keyvchan/NetAssist/pkg/message"
+	"github.com/rs/zerolog/log"
 )
 
 type Stream struct {
@@ -25,19 +26,19 @@ func ReadConn(conn interface{}) message.Message {
 	// type checking
 	connn, ok := conn.(net.Conn)
 	if !ok {
-		log.Fatal("Wrong type")
+		log.Error().Msg("Could not convert to net.Conn")
 	}
 	buf := make([]byte, 1024)
 	// input_binary := GetArg(4)
 	n, err := connn.Read(buf)
 	if errors.Is(err, io.EOF) {
-		log.Println("Connection closed")
+		log.Error().Msg("Connection closed")
 		// remove from channel
 		*ClosedConn <- connn
 		return message.Message{}
 	}
 	if err != nil {
-		log.Println(err)
+		log.Err(err)
 		return message.Message{}
 	}
 	message := message.Message{
@@ -55,6 +56,6 @@ func (s Stream) WriteMessage(msg message.Message) {
 func WriteConn(conn net.Conn, message message.Message) {
 	_, err := conn.Write(message.Content)
 	if err != nil {
-		log.Fatal(err)
+		log.Err(err).Msg("Could not write message")
 	}
 }

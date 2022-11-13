@@ -1,21 +1,22 @@
 package protocol
 
 import (
-	"log"
 	"net"
 	"os"
+	"strconv"
 
 	"github.com/keyvchan/NetAssist/pkg/connection"
 	"github.com/keyvchan/NetAssist/pkg/flags"
 	"github.com/keyvchan/NetAssist/pkg/message"
+	"github.com/rs/zerolog/log"
 )
 
 // TCPServer is a TCP server, read from stdin and write to the client and read from the client write it to stdout
 func TCPServer() {
-	address := flags.GetArg(3)
+	address := flags.Config.Host + ":" + strconv.Itoa(flags.Config.Port)
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
-		log.Fatal(err)
+		log.Err(err).Msg("Could not listen on address")
 	}
 	// store all connections in a slice
 	// NOTE: Possibly race condition
@@ -47,9 +48,9 @@ func accept_conn(read_chan chan message.Message, listener net.Listener, connecti
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Fatal(err)
+			log.Err(err).Msg("Could not accept connection")
 		}
-		log.Println("Accepted connection")
+		log.Info().Msg("Accepted connection")
 		connections[conn] = true
 		// create conn
 		tcp_client := connection.Stream{
@@ -63,10 +64,10 @@ func accept_conn(read_chan chan message.Message, listener net.Listener, connecti
 
 // TCPClient is a TCP client, read from stdin and write to the server and read from the server when it to stdout
 func TCPClient() {
-	address := flags.GetArg(3)
+	address := flags.Config.Host + ":" + strconv.Itoa(flags.Config.Port)
 	conn, err := net.Dial("tcp", address)
 	if err != nil {
-		log.Fatal(err)
+		log.Err(err).Msg("Could not connect to server")
 	}
 	defer conn.Close()
 

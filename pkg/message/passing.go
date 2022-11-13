@@ -1,8 +1,7 @@
 package message
 
 import (
-	"errors"
-	"log"
+	"github.com/rs/zerolog/log"
 )
 
 // Read reads a message from the given reader
@@ -13,7 +12,7 @@ func Read(message_chan chan Message, reader Reader) {
 		if buf.Content != nil {
 			message_chan <- buf
 		} else {
-			log.Println(errors.New("could not read message"), reader)
+			log.Error().Msg("could not read message")
 		}
 	}
 

@@ -10,12 +10,18 @@ Easily setup server and client for multiple protocols.
 
 ```shell
 $ NetAssist <type> <protocol> <address:port>
+
+# Example of use
+$ NetAssist server tcp 0.0.0.0:5678
 ```
 
 ### Send data as bytes in TCP
 
 ```shell
 $ NetAssist <type> <protocol> <address:port> --binary
+
+# Example of use
+$ NetAssist server tcp 0.0.0.0:5678 --binary
 ```
 
 Above will send data as bytes, remove `--binary` to send as string.
